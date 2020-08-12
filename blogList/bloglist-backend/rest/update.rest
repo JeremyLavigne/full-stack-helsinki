@@ -1,0 +1,10 @@
+PUT http://localhost:3001/api/blogs/5f2ffd276d57fafebe1e6c89
+
+{ 
+    "title" : "title", 
+    "author": "author", 
+    "url": "url", 
+    "likes": 2 
+}
+
+//
