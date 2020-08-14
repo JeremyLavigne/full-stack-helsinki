@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, userName, removeBlog}) => {
   const titleStyle = { fontWeight : 'bold'}
   const authorStyle = { textDecoration : 'underline', marginRight : '10px'}
   const blocStyle = { 
@@ -25,6 +25,8 @@ const Blog = ({ blog, updateBlog }) => {
     setExtendedView(false)
   }
 
+
+
   const addLike = () => {
     console.log('Supposed to update the number of like here')
 
@@ -33,15 +35,24 @@ const Blog = ({ blog, updateBlog }) => {
       author: blog.author,
       url: blog.url,
       likes: blog.likes + 1,
-      user: blog.user.id
+      user: blog.user
     }
-
     updateBlog(blog.id, updatedBlog)
+
+    //console.log('inside the add like function', blog)
+  }
+
+  const deleteBlog = () => {
+    console.log('Going to delete the blog', blog.name)
+
+    removeBlog(blog.id)
   }
 
   return (
     <div style={blocStyle}>
+
       <p style={paragrapheStyle}>
+
         <span style={titleStyle}> {blog.title}, </span>
         <span style={authorStyle}>{blog.author} </span>
 
@@ -49,14 +60,21 @@ const Blog = ({ blog, updateBlog }) => {
       </p>
 
       <div style={showWhenExtendedView}>
+
         <p>
           Visit it : <a href={blog.url}>{blog.url}</a> <br />
+
           Likes : {blog.likes}
           <button style={likeItButtonStyle} onClick={addLike}>Like it</button> <br/>
+
           Added by "{blog.user.name}"</p>
 
+        {userName === blog.user.name && <button onClick={deleteBlog}>Delete</button>}
+
         <button onClick={minimiseView}>-</button>
+
       </div>
+
     </div>
   )
 }

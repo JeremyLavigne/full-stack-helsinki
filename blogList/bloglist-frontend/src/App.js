@@ -19,17 +19,31 @@ const App = () => {
 
   // ---------------------- Blog list --------------------------
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+
+    blogService.getAll().then(
+      blogs => {
+        setBlogs( blogs ) }
     )  
+
   }, [])
 
   const displayBlogs = () => {
+    blogs.sort(function(blog1, blog2) {
+        return blog2.likes - blog1.likes;
+      });
+
     return (
       <>
           <h2>Blogs</h2>
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
+          {blogs
+            .map(blog => 
+            <Blog 
+              key={blog.id} 
+              blog={blog} 
+              updateBlog={updateBlog}
+              removeBlog={removeBlog}
+              userName={user.name}
+            />
           )}
       </>
     )
@@ -57,7 +71,7 @@ const App = () => {
     )
   }
   
- // ---------------------- Add a Blog  --------------------------
+ // ---------------------- Blog  --------------------------
   const addBlogForm = () => {
     return (
       <Togglable buttonLabel='Add a blog' ref={addBlogFormRef}>
@@ -74,21 +88,25 @@ const App = () => {
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
     })
-
   }
 
   const updateBlog = (id, updatedBlog) => {
-    console.log('We are in the good place')
-
-    console.log(id, updatedBlog)
-    blogService
+   blogService
       .update(id, updatedBlog)
       .then(updatedBlog => {
         setBlogs(blogs.map((blog) => blog.id !== id ? blog : updatedBlog))
-    })
-
+      })
   }
 
+  const removeBlog = (id) => {
+    
+    blogService
+      .deleteBlog(id)
+      .then(setBlogs(blogs.filter(blog => blog.id !== id)))
+    console.log('Zoup, blog removed')
+  }
+
+  //console.log('before the main render :', blogs) 
   // ---------------------- Render --------------------------
   return (
     <div>
