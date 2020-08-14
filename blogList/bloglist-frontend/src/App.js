@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import blogService from './services/blogs'
 
@@ -15,6 +15,7 @@ const App = () => {
   // ---------------------- Variable declarations --------------------------
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
+  const addBlogFormRef = useRef()
 
   // ---------------------- Blog list --------------------------
   useEffect(() => {
@@ -28,7 +29,7 @@ const App = () => {
       <>
           <h2>Blogs</h2>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
           )}
       </>
     )
@@ -36,10 +37,17 @@ const App = () => {
 
   // ---------------------- Log  --------------------------
   const loginForm = () => {
+    const italic = { fontStyle : 'italic'}
     return (
+      <>
+        <div>
+          <p>Please log yourself to access the blog list</p>
+          <p style={italic}>Use "myUsername" / "mySecretPass" for a trial version</p>
+        </div>
         <Togglable buttonLabel='Log in'>
           <Login setUser={setUser} /> 
         </Togglable>
+      </>
     )
   }
 
@@ -52,18 +60,31 @@ const App = () => {
  // ---------------------- Add a Blog  --------------------------
   const addBlogForm = () => {
     return (
-      <Togglable buttonLabel='Add a blog'>
+      <Togglable buttonLabel='Add a blog' ref={addBlogFormRef}>
         <AddForm createBlog={addBlog} user={user}/>
       </Togglable>
     )
   }
 
   const addBlog = (newBlog) => {
+    addBlogFormRef.current.toggleVisibility()
 
     blogService
       .create(newBlog)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
+    })
+
+  }
+
+  const updateBlog = (id, updatedBlog) => {
+    console.log('We are in the good place')
+
+    console.log(id, updatedBlog)
+    blogService
+      .update(id, updatedBlog)
+      .then(updatedBlog => {
+        setBlogs(blogs.map((blog) => blog.id !== id ? blog : updatedBlog))
     })
 
   }
